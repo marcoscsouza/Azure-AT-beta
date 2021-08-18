@@ -10,6 +10,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using web.Data;
+using webServicesDBInfra.Interfaces;
+using webServicesDBInfra;
 
 namespace web
 {
@@ -29,6 +31,8 @@ namespace web
 
             services.AddDbContext<webContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("webContext")));
+            services.AddScoped<IBlobService, BlobService>(provider =>
+                   new BlobService(Configuration.GetValue<string>("StorageAccountConnectionString")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

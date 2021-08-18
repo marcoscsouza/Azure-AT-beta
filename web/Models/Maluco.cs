@@ -13,7 +13,7 @@ namespace web.Models
 
         public string UserId { get; set; }
 
-        [NotMapped]
+        
         public string ImageUri { get; set; }
 
 
