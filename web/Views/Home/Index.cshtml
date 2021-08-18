@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+
+    <h2>Migrations</h2>
+    <p>
+        dotnet ef migrations add addnotial --startup-project web --project web --context webContext
+    </p>
+    <p>
+        dotnet ef database update --startup-project web --project web --context webContext
+
+    </p>
+
+    <p>
+        Data Source=tcp:sql-webtest.database.windows.net,1433;Initial Catalog=sqldb-webTest;User Id=marcoscsouza@sql-webtest;Password=C@ssiano96
+    </p>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
