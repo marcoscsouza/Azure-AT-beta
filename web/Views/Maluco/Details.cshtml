@@ -14,10 +14,11 @@
             @Html.DisplayNameFor(model => model.ImageUri)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
+            <img src="@Model.ImageUri" width="200" />
+            
         </dd>
         <dt class="col-sm-2">
-            <img src="@Model.ImageUri" width="200" />
+            @Html.DisplayFor(model => model.Nome)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Nome)

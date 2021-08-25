@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 class="display-4 text-muted" >Create</h1>
 
 <h4>Maluco</h4>
 <hr />
@@ -15,7 +15,7 @@
 
             <div class="form-group">
                 <label asp-for="ImageUri" class="control-label"></label>
-                <input type="file" asp-for="ImageUri" class="form-control" accept=".jpg, .png" />
+                <input type="file" asp-for="ImageUri" class="form-control btn btn-warning" accept=".jpg, .png" />
                 <span asp-validation-for="ImageUri" class="text-danger"></span>
             </div>
 

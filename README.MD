@@ -23,3 +23,9 @@ criei um projeto separado onde coloquei
 interface do blob e o serviço do blob
 importa-los no projeto principal e iniciar a interface no controller 
 fazer injeção e criar a string connection no appSettings.json
+
+aula 09 - storage account 
+add na view de edit os campos para modificar a imagemUri
+dica: deletar depois subir outra
+e add na view de delete o campo para deletar a imagem do storage blob
+
