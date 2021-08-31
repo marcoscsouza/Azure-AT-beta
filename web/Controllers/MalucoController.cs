@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using web.Data;
 using web.Models;
 using webServicesDBInfra.Interfaces;
@@ -96,34 +100,60 @@ namespace web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,UserId")] Maluco maluco)
+        public async Task<IActionResult> Edit(IFormCollection form, 
+                                              int id, Maluco maluco)
         {
             if (id != maluco.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(maluco);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MalucoExists(maluco.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(maluco);
             }
-            return View(maluco);
+            try
+            {
+                var malucoDoBanco = await _context.Maluco.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+                    
+                var file = form.Files.SingleOrDefault();
+
+                if (file == null)
+                {
+                    var manterUsuario = new Maluco();
+                    manterUsuario.ImageUri = malucoDoBanco.ImageUri;
+                    manterUsuario.Nome = malucoDoBanco.Nome;
+                    manterUsuario.UserId = malucoDoBanco.UserId;
+
+                }
+                else
+                {
+                    if (malucoDoBanco.ImageUri != null )
+                    {
+                        await _blobService.DeleteAsync(malucoDoBanco.ImageUri);
+                    }
+                    
+                    var streamFile = file.OpenReadStream();
+                    var uriImage = await _blobService.UploadAsync(streamFile);
+                    maluco.ImageUri = uriImage;
+
+                }
+                
+                _context.Update(maluco);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MalucoExists(maluco.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Maluco/Delete/5
@@ -147,9 +177,12 @@ namespace web.Controllers
         // POST: Maluco/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(IFormCollection form, int id)
         {
             var maluco = await _context.Maluco.FindAsync(id);
+
+            await _blobService.DeleteAsync(maluco.ImageUri);
+            
             _context.Maluco.Remove(maluco);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -159,5 +192,6 @@ namespace web.Controllers
         {
             return _context.Maluco.Any(e => e.Id == id);
         }
+
     }
 }

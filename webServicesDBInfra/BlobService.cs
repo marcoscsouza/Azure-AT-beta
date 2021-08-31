@@ -31,9 +31,17 @@ namespace webServicesDBInfra
 
         public async Task DeleteAsync(string blobName)
         {
+            //não funcionava
+            /*
+            var container = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobClient = container.GetBlobClient(blobName);
+            await blobClient.DeleteIfExistsAsync();
+            */
             var container = _blobServiceClient.GetBlobContainerClient(_containerName);
 
-            var blobClient = container.GetBlobClient(blobName);
+            var blob = new BlobClient(new Uri(blobName));
+
+            var blobClient = container.GetBlobClient(blob.Name);
 
             await blobClient.DeleteIfExistsAsync();
         }

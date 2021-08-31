@@ -28,4 +28,7 @@ aula 09 - storage account
 add na view de edit os campos para modificar a imagemUri
 dica: deletar depois subir outra
 e add na view de delete o campo para deletar a imagem do storage blob
+obs: a view de edit só funcionou com operador ternario para mostrar a imagem???
+a view de delete foi igual a view de details
+
 
