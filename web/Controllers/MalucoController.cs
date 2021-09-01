@@ -4,11 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using web.Data;
 using web.Models;
@@ -20,11 +22,14 @@ namespace web.Controllers
     {
         private readonly webContext _context;
         private readonly IBlobService _blobService;
+        private readonly IConfiguration _configuration;
 
-        public MalucoController(webContext context, IBlobService blobService)
+        public MalucoController(IConfiguration configuration
+            , webContext context, IBlobService blobService)
         {
             _context = context;
             _blobService = blobService;
+            _configuration = configuration;
         }
 
         // GET: Maluco
@@ -40,6 +45,16 @@ namespace web.Controllers
             {
                 return NotFound();
             }
+
+            /*****************************************************
+             *  Invocando uma função assincronicamente*/
+            var httpClient = new HttpClient();
+            var json = JsonConvert.SerializeObject(new { malucoId = id });
+            var requestData = new StringContent(json, Encoding.UTF8, "application/json");
+            var baseAddressFunction = _configuration.GetValue<string>("FuncionBaseAddress");
+            _ = await httpClient.PostAsync(baseAddressFunction, requestData);
+            /**********************************************************/
+
 
             var maluco = await _context.Maluco
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -62,8 +77,7 @@ namespace web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( IFormCollection form,
-                                        [Bind("Id,Nome,UserId")] Maluco maluco)
+        public async Task<IActionResult> Create( IFormCollection form, Maluco maluco)
         {
             if (ModelState.IsValid)
             {
