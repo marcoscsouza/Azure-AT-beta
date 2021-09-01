@@ -17,6 +17,7 @@ namespace web.Models
         public string ImageUri { get; set; }
 
         public DateTime UltimaVisualizacao { get; set; }
+        public int TotalVisualizacao { get; set; }
 
 
     }

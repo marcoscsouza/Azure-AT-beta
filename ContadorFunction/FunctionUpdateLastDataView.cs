@@ -32,8 +32,15 @@ namespace ContadorFunction
             {
                 conn.Open();
                 var textSql = $@"UPDATE [dbo].[Maluco] SET [UltimaVisualizacao] = GETDATE() WHERE [Id] = {malucoId};";
+                var totalSql = $@"UPDATE [dbo].[Maluco] SET [TotalVisualizacao] = [TotalVisualizacao] + 1 WHERE [Id] = {malucoId};";
 
                 using (SqlCommand cmd = new SqlCommand(textSql, conn))
+                {
+                    var rowsAffected = cmd.ExecuteNonQuery();
+                    log.LogInformation($"rowsAffected: {rowsAffected}");
+                }
+                
+                using (SqlCommand cmd = new SqlCommand(totalSql, conn))
                 {
                     var rowsAffected = cmd.ExecuteNonQuery();
                     log.LogInformation($"rowsAffected: {rowsAffected}");
